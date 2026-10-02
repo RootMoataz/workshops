@@ -1,0 +1,69 @@
+{
+  "info": {
+    "name": "Notice Board API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://7j6fvhcmcg.execute-api.us-east-1.amazonaws.com" },
+    { "key": "noticeId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Create notice",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('201 Created', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('noticeId', pm.response.json()._id);"
+      ] } }],
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"title\":\"Welcome\",\"content\":\"First notice\"}" },
+        "url": "{{baseUrl}}/notices" }
+    },
+    {
+      "name": "Create notice without title (400)",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('400 Bad Request', () => pm.response.to.have.status(400));"
+      ] } }],
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"content\":\"no title\"}" },
+        "url": "{{baseUrl}}/notices" }
+    },
+    {
+      "name": "List notices",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('is an array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/notices" }
+    },
+    {
+      "name": "Get notice",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/notices/{{noticeId}}" }
+    },
+    {
+      "name": "Update notice",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));"
+      ] } }],
+      "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"title\":\"Welcome (edited)\"}" },
+        "url": "{{baseUrl}}/notices/{{noticeId}}" }
+    },
+    {
+      "name": "Delete notice",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));"
+      ] } }],
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/notices/{{noticeId}}" }
+    },
+    {
+      "name": "Get deleted notice (404)",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('404 Not Found', () => pm.response.to.have.status(404));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/notices/{{noticeId}}" }
+    }
+  ]
+}
